@@ -57,3 +57,6 @@ class UserPorfile(models.Model):
     intro = models.TextField()
     age = models.IntegerField()
     interest = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.user.name}'s profile"
