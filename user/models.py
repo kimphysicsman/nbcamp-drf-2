@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
@@ -51,12 +50,19 @@ class User(AbstractBaseUser):
     def is_staff(self):
         return self.is_admin
     
+    list_display = ('id', 'username')
 
-class UserPorfile(models.Model):
+class Hobby(models.Model):
+    hobby = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.hobby}"
+
+class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     intro = models.TextField()
     age = models.IntegerField()
-    interest = models.CharField(max_length=10)
+    hobby = models.ManyToManyField(Hobby)
 
     def __str__(self):
-        return f"{self.user.name}'s profile"
+        return f"{self.user.username}'s profile"

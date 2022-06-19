@@ -2,15 +2,22 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from django.contrib.auth import login, authenticate, logout
+from .serializers import UserSerializer
+from .models import User
+from .permissions import RegistedMoreThanAWeekUser
 
-
-# 유저 
+# 유저 뷰 기능
 class UserView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        return Response({'message': 'this is get method!'})
+        user = request.user
+        
+        if not user.is_authenticated:
+            msg = '로그인을 해주세요'
+            return Response({'message': msg})
 
+        return Response(UserSerializer(user).data)
 
 # 로그인 로그아웃 기능
 class UserApiView(APIView):

@@ -22,3 +22,10 @@ class Article(models.Model):
         return f'{self.title} - {self.author}'
 
 
+class Comment(models.Model):
+    comment = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.article.title} comment - {self.author.username}'
