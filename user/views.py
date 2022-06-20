@@ -17,7 +17,7 @@ class UserView(APIView):
             msg = '로그인을 해주세요'
             return Response({'message': msg})
 
-        return Response(UserSerializer(user).data)
+        return Response(UserSerializer(user, context={'request': request}).data)
 
 # 로그인 로그아웃 기능
 class UserApiView(APIView):

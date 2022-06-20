@@ -5,7 +5,9 @@ class HobbySerializer(serializers.ModelSerializer):
    same_hobby_people = serializers.SerializerMethodField()
    # obj : hobby 객체
    def get_same_hobby_people(self, obj):
-      people = obj.userprofile_set.all()
+      user = self.context.get('request').user
+      people = obj.userprofile_set.exclude(user=user)
+      # people = obj.userprofile_set.all()
       name_list = [ person.user.username for person in people ]
       return name_list
 
