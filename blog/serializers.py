@@ -8,26 +8,24 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["category_name"]
 
 
-# class CommentSerializer(serializers.ModelSerializer):
-#    comments = serializers.SerializerMethodField()
-#    # obj : hobby 객체
-#    def get_comments(self, obj):
-#       people = obj.userprofile_set.all()
-#       name_list = [ person.user.username for person in people ]
-#       return name_list
-
-#    class Meta:
-#       model = Hobby
-#       fields = ['hobby', 'same_hobby_people']
+class CommentSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Comment
+      fields = ['author', 'comment']
 
 class ArticleSerializer(serializers.ModelSerializer):
-    # comment = CommentSerializer(many=True)
+    comments = serializers.SerializerMethodField()
     category = CategorySerializer(many=True)
     author = serializers.SerializerMethodField()
+
     def get_author(self, obj):
         author_name = obj.author.username
         return author_name
 
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(article=obj)
+        return [f'{comment.author} - {comment.comment}' for comment in comments ]
+
     class Meta:
         model = Article
-        fields = ["title", "author", "category", "content"]
+        fields = ["title", "author", "category", "content", "comments"]
