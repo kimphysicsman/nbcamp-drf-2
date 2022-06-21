@@ -5,5 +5,4 @@ from . import views
 # blog/
 urlpatterns = [
     path('article/', views.UserArticle.as_view()),
-    path('comment/', views.TestAPI.as_view()),
 ]

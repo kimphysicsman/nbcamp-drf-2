@@ -19,7 +19,7 @@ class Article(models.Model):
     title = models.CharField(max_length=50)
     content = models.TextField()
     category = models.ManyToManyField(Category)
-    show_start_date = models.DateTimeField('노출 시작 일자', auto_now_add=True)
+    show_start_date = models.DateTimeField('노출 시작 일자', auto_now_add=True) # 게시글 작성 시각
     show_end_date = models.DateTimeField('노출 종료 일자', default=timezone.now()+timedelta(days=3))
 
     def __str__(self):
