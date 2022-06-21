@@ -8,8 +8,9 @@ from .permissions import RegistedMoreThanAWeekUser
 
 # 유저 뷰 기능
 class UserView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [RegistedMoreThanAWeekUser]
 
+    # 현재 로그인한 유저 정보 보여주기
     def get(self, request):
         user = request.user
         
@@ -17,7 +18,7 @@ class UserView(APIView):
             msg = '로그인을 해주세요'
             return Response({'message': msg})
 
-        return Response(UserSerializer(user, context={'request': request}).data)
+        return Response(UserSerializer(user, context={'user': user}).data)
 
 # 로그인 로그아웃 기능
 class UserApiView(APIView):
@@ -38,3 +39,4 @@ class UserApiView(APIView):
         logout(request)
         msg = '로그아웃 성공!'
         return Response({'message': msg})
+

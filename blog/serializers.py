@@ -11,7 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
    class Meta:
       model = Comment
-      fields = ['author', 'comment']
+      fields = "__all__"
 
 class ArticleSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
