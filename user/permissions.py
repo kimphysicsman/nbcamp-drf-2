@@ -39,8 +39,10 @@ class IsAdminOrRegistedMoreThanAWeekUser(BasePermission):
         if user.is_authenticated and user.is_admin:
             return True
             
+        if user.is_authenticated and request.user.join_date < (timezone.now() - timedelta(days=7)):
+            return True
+
         if user.is_authenticated and request.method in self.SAFE_METHODS:
-            if request.user.join_date < (timezone.now() - timedelta(days=7)):
-                return True
+            return True
         
         return False
