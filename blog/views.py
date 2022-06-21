@@ -20,18 +20,12 @@ class UserArticle(APIView):
             msg = '로그인을 해주세요.'
             return Response({'message': msg})
         
-        articles = Article.objects.filter(author=user)
+        # articles = Article.objects.filter(author=user)
 
-        # # 현재 시간 기준 : 노출 시작 일자와 종료 일자 사이에 있는 게시글 만 보여주기
-        # show_date_now = timezone.now()
-        # # show_date_now = '2022-06-24 14:00:00' # datetime 기준 (현재 시간)
-        # # print(show_date_now)
-
-        # # print(datetime.now())
-        # # print(timezone.now()) # (django 기준시 기준)
-
-        # qyery = Q(author=user) & Q(show_start_date__lte=show_date_now) & Q(show_end_date__gte=show_date_now)
-        # articles = Article.objects.filter(qyery).order_by("show_start_date")
+        # 현재 시간 기준 : 노출 시작 일자와 종료 일자 사이에 있는 게시글 만 보여주기
+        show_date_now = timezone.now()
+        qyery = Q(author=user) & Q(show_start_date__lte=show_date_now) & Q(show_end_date__gte=show_date_now)
+        articles = Article.objects.filter(qyery).order_by("show_start_date")
 
         return Response(ArticleSerializer(articles, many=True).data)
 
@@ -39,7 +33,7 @@ class UserArticle(APIView):
     # 관리자 or 가입 후 7일 지난 사용자만 가능
     def post(self, request):
         title = request.data['title']
-        categorys = request.data['categorys']
+        categorys = request.data['categorys'] 
         content = request.data['content']
 
         if len(title) <= 5:
@@ -55,7 +49,6 @@ class UserArticle(APIView):
             return Response({'message': msg})
         
         categorys = [Category.objects.get(category_name=category) for category in categorys]
-    
 
         user = request.user
 
