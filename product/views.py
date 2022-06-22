@@ -3,13 +3,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from .models import Product
-from .serializers import ProductSerializer
+from user.permissions import IsAuthenticatedorRegistedMoreThanThreeDaysUser
+from .serializers import ProductSerializer, ProductDetailSerializer
 from django.utils import timezone
 from django.db.models.query_utils import Q
 
 
 # 제품 관련 기능
 class ProductView(APIView):
+    permission_classes = [IsAuthenticatedorRegistedMoreThanThreeDaysUser]
+
     # 제품 조회 기능
     def get(self, request):
         user = request.user             # 현재 로그인한 유저
@@ -18,7 +21,7 @@ class ProductView(APIView):
 
         # 작성자가 현재 로그인한 유저 이거나
         # 현재시간이 노출 시작시간과 종료시간 사이인 제품만 조회
-        query = Q(author=user) | (Q(show_start_at__lte=show_now_at) & Q(show_end_at__gte=show_now_at))
+        query = Q(author=user) | (Q(show_end_at__gte=show_now_at))
         products = Product.objects.filter(query)
         
         # 모든 제품 조회
@@ -45,3 +48,22 @@ class ProductView(APIView):
             return Response({"message": "수정 완료!!"}, status=status.HTTP_200_OK)
         
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 상품 상세 기능
+class ProductDetailView(APIView):
+    permission_classes = [IsAuthenticatedorRegistedMoreThanThreeDaysUser]
+    
+    # 상품 상세 보기
+    def get(self, request):
+        user = request.user             # 현재 로그인한 유저
+        show_now_at = timezone.now()    # 현재 시간
+        # show_now_at = "2022-06-24 00:00:00"   # 임의 시간
+
+        # 작성자가 현재 로그인한 유저 이거나
+        # 현재시간이 노출 시작시간과 종료시간 사이인 제품만 조회
+        query = Q(author=user) | (Q(show_end_at__gte=show_now_at))
+        products = Product.objects.filter(query)    
+
+        # products = Product.objects.all()
+        return Response(ProductDetailSerializer(products, many=True).data)

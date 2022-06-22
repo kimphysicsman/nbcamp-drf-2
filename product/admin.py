@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product
+from .models import Product, Review
 from django.utils.html import mark_safe
 
 class ProductAdmin(admin.ModelAdmin):
@@ -10,7 +10,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("info", {'fields': ('title', 'content', 'created_at',)}),
-        ('show_date', {'fields': ('show_start_at', 'show_end_at', )}),
+        ('show_date', {'fields': ( 'show_end_at', )}),
         ('thumbnail', {'fields': ('thumbnail', 'image_tag', )}),
         )
     
@@ -31,3 +31,4 @@ class ProductAdmin(admin.ModelAdmin):
     image_tag.allow_tags = True
 
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Review)

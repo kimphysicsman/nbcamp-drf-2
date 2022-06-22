@@ -59,7 +59,7 @@ class Hobby(models.Model):
         return f"{self.hobby}"
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     intro = models.TextField()
     age = models.IntegerField()
     hobby = models.ManyToManyField(Hobby)

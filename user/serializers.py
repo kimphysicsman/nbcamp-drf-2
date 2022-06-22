@@ -24,11 +24,30 @@ class UserProfileSerializer(serializers.ModelSerializer):
    class Meta:
         model = UserProfile
         fields = ['age', 'hobby']
-
+      
 class UserSerializer(serializers.ModelSerializer):
    userprofile = UserProfileSerializer()
    class Meta:
         # serializer에 사용될 model, field지정
         model = User
         # 모든 필드를 사용하고 싶을 경우 fields = "__all__"로 사용
-        fields = ["username", "fullname", "email", "userprofile"]
+        fields = ["username", "password", "fullname", "email", "userprofile"]
+
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+   def create(self, validated_data):
+      userprofile = validated_data.pop('userprofile')
+      password = validated_data.pop('password')
+      user = User.objects.create(**validated_data)
+      user.set_password(password)
+      user.save()
+      
+      hobbys = userprofile.pop('hobby')
+      hobbys = [Hobby.objects.get(hobby=hobby['hobby']) for hobby in hobbys]
+      userprofile = UserProfile.objects.create(user=user, **userprofile)
+      userprofile.hobby.set(hobbys)
+      userprofile.save()
+
+      return user   

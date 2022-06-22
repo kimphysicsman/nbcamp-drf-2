@@ -52,7 +52,6 @@ class UserArticle(APIView):
 
         user = request.user
 
-
         article = Article.objects.create(author=user, title=title, content=content)
         article.category.set(categorys)
         article.save()

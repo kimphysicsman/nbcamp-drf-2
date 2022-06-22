@@ -46,3 +46,26 @@ class IsAdminOrRegistedMoreThanAWeekUser(BasePermission):
             return True
         
         return False
+
+class IsAuthenticatedorRegistedMoreThanThreeDaysUser(BasePermission):
+    """
+    get : 비로그인 사용자 가능
+    post, put, delete: 로그인 and 가입일 기준 3일 이상 지난 사용자만 가능
+    """
+    message = '관리자 또는 가입 후 3일 이상 지난 사용자만 게시글을 작성하실 수 있습니다.'
+
+    SAFE_METHODS = ('GET', )
+
+    def has_permission(self, request, view):
+        user = request.user
+
+        if user.is_authenticated and user.is_admin:
+            return True
+            
+        if user.is_authenticated and request.user.join_date < (timezone.now() - timedelta(days=3)):
+            return True
+
+        if request.method in self.SAFE_METHODS:
+            return True
+        
+        return False
